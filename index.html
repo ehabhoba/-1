@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>نموذج التسجيل - EhabGM Online Services</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 400px;
+      margin: 40px auto;
+      padding: 0 20px;
+      background: #f0f0f5;
+      direction: rtl;
+    }
+    h2 {
+      text-align: center;
+      color: #333;
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      font-weight: bold;
+      color: #555;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
+      font-size: 16px;
+    }
+    button {
+      background-color: #0077cc;
+      color: white;
+      border: none;
+      margin-top: 20px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #005fa3;
+    }
+  </style>
+</head>
+<body>
+
+  <h2>تسجيل في خدمات EhabGM</h2>
+
+  <form id="leadForm">
+    <label for="name">الاسم الكامل</label>
+    <input type="text" id="name" name="name" placeholder="اكتب اسمك هنا" required />
+
+    <label for="phone">رقم الهاتف</label>
+    <input type="tel" id="phone" name="phone" placeholder="مثال: 01012345678" required pattern="[0-9]{10,15}" />
+
+    <label for="service">اختر الخدمة</label>
+    <select id="service" name="service" required>
+      <option value="" disabled selected>اختر الخدمة</option>
+      <option value="تصميم جرافيك">تصميم جرافيك</option>
+      <option value="تسويق إلكتروني">تسويق إلكتروني</option>
+      <option value="تحديد مواقع">تحديد مواقع</option>
+      <option value="خدمات أخرى">خدمات أخرى</option>
+    </select>
+
+    <button type="submit">إرسال</button>
+  </form>
+
+  <script>
+    const scriptURL = 'https://script.google.com/macros/s/AKfycbw5Sk0nK9UKHhsRCupN_B30sibSr9q_aEP77KBoc1rckCn7qJ_Vfg4yDqrM11pY1hxzYQ/exec';
+
+    const form = document.getElementById('leadForm');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const name = document.getElementById('name').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const service = document.getElementById('service').value;
+
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('phone', phone);
+      formData.append('service', service);
+
+      try {
+        const response = await fetch(scriptURL, {
+          method: 'POST',
+          body: formData
+        });
+
+        if (response.ok) {
+          alert(`✅ تم إرسال البيانات بنجاح، تابع رسائلك على واتساب يا ${name}!`);
+
+          const whatsappMessage = encodeURIComponent(`السلام عليكم ${name}، شكراً لتسجيلك في خدمة ${service} مع EhabGM. فريقنا هيتواصل معاك قريبًا.`);
+          const whatsappNumber = phone.replace(/[^0-9]/g, '');
+          const whatsappURL = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
+
+          window.open(whatsappURL, '_blank');
+
+          form.reset();
+        } else {
+          alert('❌ حصل خطأ أثناء الإرسال. حاول تاني.');
+        }
+
+      } catch (error) {
+        console.error('خطأ:', error);
+        alert('❌ حصل خطأ أثناء الاتصال بالسيرفر.');
+      }
+    });
+  </script>
+
+</body>
+</html>
+LP
